@@ -161,23 +161,38 @@ int main(int argc, char *argv[])
     // ----------test area---------
     // test_Graph(vector<string> src,vector<set<string>> dest)
 
-    vector<string> name_test; //開一個test vector 來存放一行name的element
-
-    split_str(name_vec[0],name_test);
-    pop_front(name_test);
-
-    string x__;
-    x__ = name_test.back();
-
-    name_test.pop_back();
-    
-
     test_Graph new_graph;
+    vector<string> str_vec;
+    for(auto &v:name_vec){
+        vector<string> name_test;
+        split_str(v,name_test);
+        pop_front(name_test);
+        string x__;
+        x__ = name_test.back();
+        name_test.pop_back();
 
-    for(auto &src:name_test){
-        new_graph.insert_edge(src,x__);
+        for(auto &element:name_test){
+            str_vec.push_back(element);
+        }
+        for(auto &src:name_test){
+            new_graph.insert_edge(src,x__);
+        }
     }
-    new_graph.print_graph(name_test);
+
+
+    // vector<string> name_test; //開一個test vector 來存放一行name的element
+    // split_str(name_vec[0],name_test);
+    // pop_front(name_test);
+    // string x__;
+    // x__ = name_test.back();
+    // name_test.pop_back();
+    // test_Graph new_graph;
+
+    // for(auto &src:name_test){
+    //     new_graph.insert_edge(src,x__);
+    // }
+
+    new_graph.print_graph(str_vec);
 
     return 0;
 }
