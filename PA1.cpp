@@ -6,84 +6,31 @@
 #include <map>
 #include <set>
 
-/*
-graph OK
-read file OK
-
-parse file
-將各點（a b c）用index去mapping
-
-建graph 
-
-*/
-
 using namespace std;
-
-struct Edge{
-    int src, dest, weight;
-};
-
-typedef pair<int,int> Pair;
 
 class Graph{
 public:
-    vector <vector<Pair>> adjList;
-    /*
-            1   2   3   4   5   6
-    src 1 (d,w)(0,2) 
-        2
-        3
-        4
-        5
-        6
-    */
-
-    /*
-        adjList 
-    */
-    Graph(vector<Edge> const &edges,int n){
-        adjList.resize(n);
-        for(auto &edge: edges){
-            int src = edge.src;
-            int dest = edge.dest;
-            int weight = edge.weight;
-
-            adjList[src].push_back(make_pair(dest,weight));
-
-        }
-    }
-};
-void printGraph(Graph const &graph,int n){
-    for(int i = 0 ; i < n;i++){
-        cout << i << "-->";
-        for(Pair v: graph.adjList[i]){
-            cout << "(" << i <<", " << v.first<<", "<<v.second << ") ";
-        }
-        cout << endl;
-    }
-}
-
-
-class test_Graph{
-public:
     map<string, set<string>> adjList_;
-    test_Graph(){}
+    //map<dest, set<src>> adjList_;
+    Graph(){}
 
-    test_Graph(vector<string> src,vector<set<string>> dest){
+    Graph(vector<string> src,vector<set<string>> dest){
         for(int i=0;i<src.size();i++){
             adjList_.insert( make_pair(src[i],dest[i]) );
         }
     }
 
     void insert_edge(string src,string dest){
-        adjList_[src].insert(dest);
+        adjList_[dest].insert(src);
     }
 
-    void print_graph(vector<string> src){
-        for(int i=0;i<src.size();i++){
-            for(auto &s:adjList_[src[i]]){
-                cout << "src:" << src[i] << ", dest="<< s << endl;
+    void print_graph(vector<string> dest){
+        for(int i=0;i<dest.size();i++){
+            cout << "dest: " << dest[i]<< ", src={ ";
+            for(auto &s:adjList_[dest[i]]){
+                cout << s << " ";
             }
+            cout <<"}"<< endl;
         }
     }
 
@@ -108,6 +55,14 @@ void pop_front(std::vector<T>& vec)
     assert(!vec.empty());
     vec.erase(vec.begin());
 }
+
+
+void out_boolean(Graph graph,vector<vector<string>> boolean_function,map<string,int> hash_index){
+    //map<dest, set<src>> adjList_;
+    map<string,string>
+
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -137,19 +92,17 @@ int main(int argc, char *argv[])
     output_ = blif_everyline_data[2];
 
 
+    int first_name = 0;
     for(int i=0;i<blif_everyline_data.size();i++){
-        string name;
         if(blif_everyline_data[i].find(".names")!=-1){
+            if(first_name==0){
+                first_name = i;//紀錄第一個name的位置 
+            }
             name_vec.push_back(blif_everyline_data[i]);
         }        
     }
 
-    //-----------test name_vec-------
-    // for(auto s:name_vec){
-    //     cout<<s<<endl;
-    // }
-
-    
+    //cout << "first name " << first_name <<endl;
     //處理input output字串
     split_str(input_,input_vec);
     pop_front(input_vec);
@@ -157,42 +110,61 @@ int main(int argc, char *argv[])
     pop_front(output_vec);
 
 
-
     // ----------test area---------
     // test_Graph(vector<string> src,vector<set<string>> dest)
 
-    test_Graph new_graph;
-    vector<string> str_vec;
+    Graph new_graph;
+    vector<string> dest_vec; //放dest以便print
     for(auto &v:name_vec){
-        vector<string> name_test;
+        vector<string> name_test; //暫時放src
         split_str(v,name_test);
         pop_front(name_test);
-        string x__;
-        x__ = name_test.back();
+        string dest;
+        dest = name_test.back();
         name_test.pop_back();
-
-        for(auto &element:name_test){
-            str_vec.push_back(element);
-        }
         for(auto &src:name_test){
-            new_graph.insert_edge(src,x__);
+            new_graph.insert_edge(src,dest);
         }
+        dest_vec.push_back(dest);
     }
 
+    new_graph.print_graph(dest_vec);
 
-    // vector<string> name_test; //開一個test vector 來存放一行name的element
-    // split_str(name_vec[0],name_test);
-    // pop_front(name_test);
-    // string x__;
-    // x__ = name_test.back();
-    // name_test.pop_back();
-    // test_Graph new_graph;
-
-    // for(auto &src:name_test){
-    //     new_graph.insert_edge(src,x__);
+    //map<dest,vector<boolean function>> boolean_function;
+    //store boolean function
+    vector<vector<string>> boolean_function;
+    vector<string> every_dest_boolean;
+    for(int i=first_name+1;i<blif_everyline_data.size();i++){
+        if(blif_everyline_data[i].find(".names")!=-1 || blif_everyline_data[i].find(".end")!=-1){
+            boolean_function.push_back(every_dest_boolean);
+            every_dest_boolean.clear();
+            continue; //跳到name下一行
+        }
+        else{
+            every_dest_boolean.push_back(blif_everyline_data[i]);
+        }
+    }
+    
+    //create a hash table for dest and boolean fuction
+    map<string,int> hash_index;
+    for(int i=0;i<dest_vec.size();i++){
+        hash_index.insert(make_pair(dest_vec[i],i));
+    }
+    // for(auto &i:hash_index){
+    //     cout << i.first << ":" << i.second << endl;
     // }
 
-    new_graph.print_graph(str_vec);
 
+
+    // for(auto &dest_:boolean_function){
+    //     for(auto &s_:dest_){
+    //         cout << s_ <<endl;
+    //     }
+    //     cout<<"___________next______________"<<endl;
+    // }
+
+    for(auto &i:boolean_function[hash_index["q"]]){
+        cout << i << endl;
+    }
     return 0;
 }
