@@ -147,11 +147,13 @@ int main(int argc, char *argv[])
             every_dest_boolean.push_back(blif_everyline_data[i]);
         }
     }
-    //把boolean_funcion最後的空白跟1刪掉
+    //把boolean_funcion的空白以及最後的0/1保存下來
     for(auto &des:boolean_function){
         for(auto &lines:des){
+            char temp_str = lines.back();
             lines.pop_back();
             lines.pop_back();
+            lines = lines + temp_str;
         }
     }
 
@@ -212,23 +214,27 @@ int main(int argc, char *argv[])
         }
         else{
             for(auto &pre:new_graph.adjList_[in_node]){
-                predecessor = predecessor + pre +", ";
+                predecessor = predecessor + pre +",";
             }
         }
+        if(predecessor.back()==',')
+            predecessor.pop_back();
         cout << "predecessor:" << predecessor <<endl;
 
 
         for(int i=0;i<dest_vec.size();i++){
             for(auto &suc:new_graph.adjList_[dest_vec[i]]){
                 if(in_node==suc){
-                    successor = successor + dest_vec[i] + ", ";
+                    successor = successor + dest_vec[i] + ",";
                     break;
                 }
             }
-            if(successor.empty()){
-                successor = successor + "-";
-            }
         }
+        if(successor.empty()){
+            successor = successor + "-";
+        }
+        if(successor.back()==',')
+            successor.pop_back();
         cout << "successor:" << successor <<endl;
         cout << "Please input a node:";
         in_node.clear();
@@ -261,7 +267,9 @@ int main(int argc, char *argv[])
 
         result = result +dest_vec[des]+"= ";
         for(int i=0;i<boolean_function[hash_index[dest_vec[des]]].size();i++){
-            for(int j=0;j<temp[i].size();j++){
+            if(temp[i][temp[i].size()-1] == '0') //因為temp的最後一個位元是決定dest ouput 是1or0
+                result = result + "( ";
+            for(int j=0;j<temp[i].size()-1;j++){
                 if(temp[i][j]=='1'){
                     result = result + index_forbool[j] + " ";
                 }
@@ -270,6 +278,8 @@ int main(int argc, char *argv[])
                     result = result + index_forbool[j] + "' ";
                 }            
             }
+            if(temp[i][temp[i].size()-1] == '0')
+                result = result + ")' ";
             if(i==boolean_function[hash_index[dest_vec[des]]].size()-1) continue;
             result = result + "+";
         }
