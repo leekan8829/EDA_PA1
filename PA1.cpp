@@ -57,14 +57,6 @@ void pop_front(std::vector<T>& vec)
     vec.erase(vec.begin());
 }
 
-
-// void out_boolean(Graph graph,vector<vector<string>> boolean_function,map<string,int> hash_index){
-//     //map<dest, set<src>> adjList_;
-//     map<string,string>
-
-// }
-
-
 int main(int argc, char *argv[])
 {
 
@@ -73,7 +65,6 @@ int main(int argc, char *argv[])
     vector<string> blif_everyline_data;
     ifstream myFile;
     myFile.open(Filename);
-    //myFile.open("xor.blif");
 
     string model_;
     string input_;
@@ -162,46 +153,6 @@ int main(int argc, char *argv[])
     for(int i=0;i<dest_vec.size();i++){
         hash_index.insert(make_pair(dest_vec[i],i));
     }
-
-    // // //每個dest 總共有幾個src
-    // cout << new_graph.adjList_["p"].size() << endl;
-
-    // // //每個dest boolean 總共有幾列
-    // cout << boolean_function[hash_index["p"]].size() << endl;
-
-    // vector<string> index_forbool;   //紀錄src node 以及 booleanfunction
-    // for(auto &s:new_graph.adjList_["p"]){
-    //     index_forbool.push_back(s);
-    //     cout << s <<endl;
-    // }
-
-    // // //temp存放每一個dest的boolean圖 並且用char存 不是用string
-    // vector<vector<char>> temp;
-    // for(auto &lines:boolean_function[hash_index["p"]]){
-    //     vector<char> temp2;
-    //     for(auto &ch:lines){
-    //         temp2.push_back(ch);
-    //     }
-    //     temp.push_back(temp2);
-    // }
-
-    // //判斷結果 將其輸出
-    // result = result + "p = ";
-    // for(int i=0;i<boolean_function[hash_index["p"]].size();i++){
-    //     for(int j=0;j<temp[i].size();j++){
-    //         if(temp[i][j]=='1'){
-    //             result = result + index_forbool[j] + " ";
-    //         }
-    //         else if(temp[i][j]=='-') continue;
-    //         else if(temp[i][j]=='0'){
-    //             result = result + index_forbool[j] + "' ";
-    //         }            
-    //     }
-    //     cout << result <<endl;
-    //     if(i==boolean_function[hash_index["p"]].size()-1)break;
-    //     result = result + "+";
-    // }
-
     string in_node = "";
     cout << "Please input a node:";
     cin >> in_node;
@@ -265,7 +216,7 @@ int main(int argc, char *argv[])
         }
 
 
-        result = result +dest_vec[des]+"= ";
+        result = result +dest_vec[des]+" = ";
         for(int i=0;i<boolean_function[hash_index[dest_vec[des]]].size();i++){
             if(temp[i][temp[i].size()-1] == '0') //因為temp的最後一個位元是決定dest ouput 是1or0
                 result = result + "( ";
@@ -281,13 +232,10 @@ int main(int argc, char *argv[])
             if(temp[i][temp[i].size()-1] == '0')
                 result = result + ")' ";
             if(i==boolean_function[hash_index[dest_vec[des]]].size()-1) continue;
-            result = result + "+";
+            result = result + " + ";
         }
         result = result + "\n";
     }
-
-    // cout << endl;
-    // cout << result <<endl;
 
     ofstream ofs;
     ofs.open("function.out",ios::out);
